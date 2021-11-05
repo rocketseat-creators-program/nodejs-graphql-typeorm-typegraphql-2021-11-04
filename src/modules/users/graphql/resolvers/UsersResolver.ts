@@ -1,4 +1,12 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  FieldResolver,
+  Mutation,
+  Query,
+  Resolver,
+  Root,
+} from "type-graphql";
+import { Pet } from "../../../pets/database/entities/Pet";
 import { User } from "../../database/entities/User";
 
 @Resolver(User)
@@ -23,5 +31,14 @@ export class UsersResolver {
     });
     await User.save(user);
     return user;
+  }
+
+  @FieldResolver(() => [Pet])
+  async pets(@Root() root: User): Promise<Pet[]> {
+    return Pet.find({
+      where: {
+        userId: root.id,
+      },
+    });
   }
 }
